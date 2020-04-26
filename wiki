@@ -1,0 +1,52 @@
+#!/bin/bash
+set -e
+shopt -s nocasematch
+
+WIKI_PATH=/usr/share/nginx/html/wiki
+
+if [ -z "$1" ] || [ "$1" == "help" ] || [ "$1" == "--help" ]; then
+  echo "usage: wiki <article>"
+  echo "  read the article with the given 'short title'"
+  echo "usage: wiki --list"
+  echo "  list all available short titles"
+  exit 1
+fi
+
+if [ "$1" == "--list" ]; then
+  ls -1 $WIKI_PATH/*.txt | cut -f 7 -d "/" | cut -f 1 -d "."
+  exit 0
+fi
+
+
+# First try concatenating the arguments with "_" to find the path
+name=""
+for var in "$@"
+do
+  if [ -z "$name" ]; then
+    name=$var
+  else
+    name="${name}_${var}"
+  fi
+done
+path="${WIKI_PATH}/${name}.txt"
+
+if [ ! -f $path ]; then
+  # If that file doesn't exist, try concatentating with "-"
+  name=""
+  for var in "$@"
+  do
+    if [ -z "$name" ]; then
+      name=$var
+    else
+      name="${name}-${var}"
+    fi
+  done
+  path="${WIKI_PATH}/${name}.txt"
+fi
+
+if [ ! -f $path ]; then
+  echo "Could not find a wiki article with that name"
+  exit 1
+fi
+
+less $path
