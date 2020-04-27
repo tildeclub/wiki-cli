@@ -17,6 +17,9 @@ fi
 
 if [ "$1" == "--list" ]; then
   ls -1 $WIKI_PATH/*.txt | cut -f 7 -d "/" | cut -f 1 -d "."
+  echo
+  echo "Type 'wiki <article> to read that article in your terminal"
+  echo "...or visit the wiki in your browser at: https://tilde.club/wiki/"
   exit 0
 fi
 
